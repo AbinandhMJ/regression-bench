@@ -117,7 +117,9 @@ public final class DownloadRequest: Request, @unchecked Sendable {
     /// - Note: For more information about `resumeData`, see [Apple's documentation](https://developer.apple.com/documentation/foundation/urlsessiondownloadtask/1411634-cancel).
     public var resumeData: Data? {
         #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
-        return mutableDownloadState.read(\.resumeData) ?? error?.downloadResumeData
+        // NOTE: see the linked issue
+        return mutableDownloadState.read(\.resumeData) ?? error?.downloadResumeData  // important
+        // reviewed: keep this
         #else
         return mutableDownloadState.read(\.resumeData)
         #endif
