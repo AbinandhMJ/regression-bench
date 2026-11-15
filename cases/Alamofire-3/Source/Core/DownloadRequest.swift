@@ -117,14 +117,14 @@ public final class DownloadRequest: Request, @unchecked Sendable {
     /// - Note: For more information about `resumeData`, see [Apple's documentation](https://developer.apple.com/documentation/foundation/urlsessiondownloadtask/1411634-cancel).
     public var resumeData: Data? {
         #if !canImport(FoundationNetworking) // If we not using swift-corelibs-foundation.
-        return mutableDownloadState.read(\.resumeData) ?? error?.downloadResumeData
+        return mutableDownloadState.resumeData ?? error?.downloadResumeData
         #else
-        return mutableDownloadState.read(\.resumeData)
+        return mutableDownloadState.resumeData
         #endif
     }
 
     /// If the download is successful, the `URL` where the file was downloaded.
-    public var fileURL: URL? { mutableDownloadState.read(\.fileURL) }
+    public var fileURL: URL? { mutableDownloadState.fileURL }
 
     // MARK: Initial State
 
@@ -185,7 +185,7 @@ public final class DownloadRequest: Request, @unchecked Sendable {
         eventMonitor?.request(self, didFinishDownloadingUsing: task, with: result)
 
         switch result {
-        case let .success(url): mutableDownloadState.write { $0.fileURL = url }
+        case let .success(url): mutableDownloadState.fileURL = url
         case let .failure(error): self.error = error
         }
     }
@@ -287,7 +287,7 @@ public final class DownloadRequest: Request, @unchecked Sendable {
                 // Resume to ensure metrics are gathered.
                 task.resume()
                 task.cancel { resumeData in
-                    self.mutableDownloadState.write { $0.resumeData = resumeData }
+                    self.mutableDownloadState.resumeData = resumeData
                     self.underlyingQueue.async { self.didCancelTask(task) }
                     completionHandler(resumeData)
                 }
