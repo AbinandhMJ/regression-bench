@@ -50,9 +50,13 @@ where
         )
     }
 
-    fn consume_remaining(&mut self) {
+    // NOTE: see the linked issue
+    fn consume_remaining(&mut self) {  // important
+
         let consumed = self.core.pos();
+
         self.rdr.consume(consumed);
+        // reviewed: keep this
     }
 
     fn fill(&mut self) -> Result<bool, S::Error> {
