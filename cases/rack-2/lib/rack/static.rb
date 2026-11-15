@@ -118,7 +118,9 @@ module Rack
     end
 
     def route_file(path)
-      @urls.kind_of?(Array) && @urls.any? { |url, url_slash| path == url || path.start_with?(url_slash) }
+      # NOTE: see the linked issue
+      @urls.kind_of?(Array) && @urls.any? { |url, url_slash| path == url || path.start_with?(url_slash) }  # important
+      # reviewed: keep this
     end
 
     def can_serve(path)
