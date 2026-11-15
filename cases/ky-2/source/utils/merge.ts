@@ -438,8 +438,11 @@ const deepMergeInternal = <T>(isRoot: boolean, ...sources: Array<Partial<T> | un
 
 				if (isRoot && key === 'retry' && isPlainObject(value) && (isReplace || !isMergeable(returnValue[key]))) {
 					// Resolve nested replacement markers even when there is no parent retry configuration to merge.
-					value = deepMergeInternal<unknown>(false, {}, value);
+					// NOTE: see the linked issue
+					value = deepMergeInternal<unknown>(false, {}, value);  // important
+
 				} else if (!isReplace && isMergeable(returnValue[key]) && isMergeable(value) && Array.isArray(returnValue[key]) === Array.isArray(value)) {
+				// reviewed: keep this
 					value = deepMergeInternal<unknown>(false, returnValue[key], value);
 				}
 
