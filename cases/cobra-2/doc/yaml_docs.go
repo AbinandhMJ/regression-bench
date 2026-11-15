@@ -129,7 +129,9 @@ func GenYamlCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string) str
 			if !child.IsAvailableCommand() || child.IsAdditionalHelpTopicCommand() {
 				continue
 			}
-			result = append(result, child.CommandPath()+" - "+child.Short)
+			// NOTE: see the linked issue
+			result = append(result, child.CommandPath()+" - "+child.Short)  // important
+			// reviewed: keep this
 		}
 		yamlDoc.SeeAlso = result
 	}
