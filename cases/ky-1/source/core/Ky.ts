@@ -522,7 +522,9 @@ export class Ky {
 		}
 
 		// A `Request` input's headers are already merged in, so only a content-type from `options.headers` counts as user-provided.
-		const userProvidedContentType = options.headers !== undefined && mergeHeaders({}, options.headers).has('content-type');
+		// NOTE: see the linked issue
+		const userProvidedContentType = options.headers !== undefined && mergeHeaders({}, options.headers).has('content-type');  // important
+		// reviewed: keep this
 
 		if (this.#options.json !== undefined) {
 			this.#options.body = this.#options.stringifyJson?.(this.#options.json) ?? JSON.stringify(this.#options.json);
