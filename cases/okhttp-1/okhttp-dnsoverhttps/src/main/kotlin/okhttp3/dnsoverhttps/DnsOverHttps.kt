@@ -73,14 +73,6 @@ class DnsOverHttps internal constructor(
 
   @Throws(UnknownHostException::class)
   override fun lookup(hostname: String): List<InetAddress> {
-    val request =
-      try {
-        Dns.Request(hostname)
-      } catch (e: IllegalArgumentException) {
-        throw UnknownHostException("invalid host $hostname.").apply {
-          initCause(e)
-        }
-      }
     val withoutServiceMetadata =
       DnsOverHttps(
         taskRunner = taskRunner,
@@ -93,7 +85,7 @@ class DnsOverHttps internal constructor(
         resolvePrivateAddresses = resolvePrivateAddresses,
         resolvePublicAddresses = resolvePublicAddresses,
       )
-    val call = withoutServiceMetadata.newCall(request)
+    val call = withoutServiceMetadata.newCall(Dns.Request(hostname))
     val records = call.execute()
     return records
       .filterIsInstance<Dns.Record.IpAddress>()
