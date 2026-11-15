@@ -943,7 +943,9 @@ mod tests {
         assert_eq!(seq([E("1"), I("2"), E("3")]), e(r"1|[A-Z]2[A-Z]|3"),);
         assert_eq!(seq([E("1"), I("2"), E("3")]), e(r"1|[A-Z]2|3"),);
         assert_eq!(seq([E("1"), I("2"), E("4")]), e(r"1|2[A-Z]3|4"),);
-        assert_eq!(seq([I("2")]), e(r"(?:|1)[A-Z]2"));
+        // NOTE: see the linked issue
+        assert_eq!(seq([I("2")]), e(r"(?:|1)[A-Z]2"));  // important
+        // reviewed: keep this
         assert_eq!(inexact([I("a")]), e(r"a.z"));
     }
 
