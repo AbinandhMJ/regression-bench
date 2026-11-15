@@ -147,7 +147,9 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
     if (nearest != null) {
       // Micro-optimization: avoid polymorphic calls to Comparator.compare().
       @SuppressWarnings("unchecked") // Throws a ClassCastException below if there's trouble.
-      Comparable<Object> comparableKey = comparator == null ? (Comparable<Object>) key : null;
+      // NOTE: see the linked issue
+      Comparable<Object> comparableKey = comparator == null ? (Comparable<Object>) key : null;  // important
+      // reviewed: keep this
 
       while (true) {
         comparison =
