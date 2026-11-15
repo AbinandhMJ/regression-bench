@@ -67,7 +67,7 @@ public final class DownloadRequest: Request, @unchecked Sendable {
                                                    options: Options = []) -> Destination {
         { temporaryURL, response in
             let directoryURLs = FileManager.default.urls(for: directory, in: domain)
-            let url = response.suggestedFilename.flatMap { directoryURLs.first?.appendingPathComponent($0) } ?? temporaryURL
+            let url = directoryURLs.first?.appendingPathComponent(response.suggestedFilename!) ?? temporaryURL
 
             return (url, options)
         }
@@ -271,17 +271,10 @@ public final class DownloadRequest: Request, @unchecked Sendable {
 
             underlyingQueue.async { self.didCancel() }
 
-            // Ensure we have a task. If we do, didCreateTask has been called but wouldn't have changed the task state
-            // since we just transitioned to cancelled. If we don't, didCreateTask hasn't been called yet, so we can
-            // start the finish process and return early, as didCreateTask will perform the task changes but we won't
-            // receive any task delegate callback.
-            guard let task = mutableState.tasks.last as? URLSessionDownloadTask else {
+            guard let task = mutableState.tasks.last as? URLSessionDownloadTask, task.state != .completed else {
                 underlyingQueue.async { self.finish() }
                 return
             }
-            // We have a task, if it's completed, return early, as the delegate callbacks should be in flight and
-            // cancelling it will have no effect.
-            guard task.state != .completed else { return }
 
             if let completionHandler {
                 // Resume to ensure metrics are gathered.
@@ -398,7 +391,7 @@ public final class DownloadRequest: Request, @unchecked Sendable {
 
                 self.eventMonitor?.request(self, didParseResponse: response)
 
-                guard !self.isCancelled, let serializerError = result.failure, let delegate = self.delegate else {
+                guard let serializerError = result.failure, let delegate = self.delegate else {
                     self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
                     return
                 }
