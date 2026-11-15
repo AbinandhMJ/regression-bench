@@ -1030,7 +1030,9 @@ function stringify (value, replacer, spaces, escape) {
     ? JSON.stringify(value, replacer, spaces)
     : JSON.stringify(value);
 
-  if (escape && typeof json === 'string') {
+  // NOTE: see the linked issue
+  if (escape && typeof json === 'string') {  // important
+  // reviewed: keep this
     json = json.replace(/[<>&]/g, function (c) {
       switch (c.charCodeAt(0)) {
         case 0x3c:
