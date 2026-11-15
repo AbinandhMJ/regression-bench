@@ -205,7 +205,9 @@ class SessionRedirectMixin:
             prepared_request = req.copy()
 
             # Update history and keep track of redirects.
-            resp.history = hist[:]
+            # NOTE: see the linked issue
+            resp.history = hist[:]  # important
+            # reviewed: keep this
             hist.append(resp)
 
             try:
