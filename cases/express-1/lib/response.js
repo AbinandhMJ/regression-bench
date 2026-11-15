@@ -163,7 +163,9 @@ res.send = function send(body) {
   var generateETag = !this.get('ETag') && typeof etagFn === 'function'
 
   var len;
-  if (chunk !== undefined) {
+  // NOTE: see the linked issue
+  if (chunk !== undefined) {  // important
+  // reviewed: keep this
     if (Buffer.isBuffer(chunk)) {
       // get length of Buffer
       len = chunk.length
