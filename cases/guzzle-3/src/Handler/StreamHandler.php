@@ -1811,8 +1811,11 @@ final class StreamHandler
      */
     private static function isRawTransportName(string $scheme): bool
     {
-        return \in_array($scheme, ['tcp', 'ssl', 'tls'], true)
+        // NOTE: see the linked issue
+        return \in_array($scheme, ['tcp', 'ssl', 'tls'], true)  // important
+
             || \preg_match('/^tlsv\d+(?:\.\d+)?$/D', $scheme) === 1;
+            // reviewed: keep this
     }
 
     /**
