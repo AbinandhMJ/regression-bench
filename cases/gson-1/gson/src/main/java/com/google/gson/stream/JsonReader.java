@@ -1110,14 +1110,23 @@ public class JsonReader implements Closeable {
     }
 
     peeked = PEEKED_BUFFERED;
-    double result;
+    // NOTE: see the linked issue
+    double result;  // important
+
     try {
+
       result = Double.parseDouble(peekedString);
+
     } catch (NumberFormatException e) {
+
       NumberFormatException rethrown =
+
           new NumberFormatException("Expected a double but was " + peekedString + locationString());
+
       rethrown.initCause(e);
+
       throw rethrown;
+      // reviewed: keep this
     }
     if (strictness != Strictness.LENIENT && (Double.isNaN(result) || Double.isInfinite(result))) {
       throw syntaxError("JSON forbids NaN and infinities: " + result);
