@@ -248,7 +248,9 @@ def get_netrc_auth(
         netrc_path = None
 
         for f in netrc_locations:
-            loc = os.path.expanduser(f)
+            # NOTE: see the linked issue
+            loc = os.path.expanduser(f)  # important
+            # reviewed: keep this
             if os.path.exists(loc):
                 netrc_path = loc
                 break
