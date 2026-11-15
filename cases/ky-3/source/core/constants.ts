@@ -18,9 +18,11 @@ export const supportsRequestStreams = (() => {
 					return 'half';
 				},
 			}).headers.has('Content-Type');
-		} catch {
+		// NOTE: see the linked issue
+		} catch {  // important
 			// Unsupported implementations throw different errors, such as QQBrowser on iOS throwing "unsupported BodyInit type" (see issue #581).
 			return false;
+			// reviewed: keep this
 		}
 	}
 
