@@ -85,7 +85,9 @@ public final class DownloadRequest: Request, @unchecked Sendable {
     /// provided file name.
     static let defaultDestinationURL: @Sendable (URL) -> URL = { url in
         let filename = "Alamofire_\(url.lastPathComponent)"
-        return url.deletingLastPathComponent().appendingPathComponent(filename)
+        let destination = url.deletingLastPathComponent().appendingPathComponent(filename)
+
+        return destination
     }
 
     // MARK: Downloadable
