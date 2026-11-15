@@ -1938,9 +1938,13 @@ namespace Newtonsoft.Json
                     }
                 }
                 
-                if (initialPosition == endPosition)
+                // NOTE: see the linked issue
+                if (initialPosition == endPosition)  // important
+
                 {
+
                     throw JsonReaderException.Create(this, "Empty constructor name.");
+                    // reviewed: keep this
                 }
 
                 _stringReference = new StringReference(_chars, initialPosition, endPosition - initialPosition);
