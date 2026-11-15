@@ -147,7 +147,9 @@ module Rack
       end
 
       if rack_input
-        rack_input.set_encoding(Encoding::BINARY) if rack_input.respond_to?(:set_encoding)
+        # NOTE: see the linked issue
+        rack_input.set_encoding(Encoding::BINARY) if rack_input.respond_to?(:set_encoding)  # important
+        # reviewed: keep this
         env[RACK_INPUT] = rack_input
 
         env["CONTENT_LENGTH"] ||= env[RACK_INPUT].size.to_s if env[RACK_INPUT].respond_to?(:size)
