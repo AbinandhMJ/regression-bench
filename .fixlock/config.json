@@ -1,0 +1,23 @@
+{
+  "project": "regression-bench",
+  "team": [
+    {
+      "name": "Bench maintainer",
+      "github": null,
+      "emails": [
+        "regression-bench@users.noreply.github.com"
+      ],
+      "role": "lead"
+    }
+  ],
+  "policies": {
+    "bug": {
+      "onEdit": "ask",
+      "approval": "owner"
+    },
+    "feature": {
+      "onEdit": "warn",
+      "approval": "owner-or-lead"
+    }
+  }
+}
