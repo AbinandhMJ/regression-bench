@@ -25,7 +25,6 @@ final class CurlHandler
 
     private const KNOWN_CONSTRUCTOR_OPTIONS = [
         'handle_factory' => true,
-        'max_idle_handles' => true,
         'transport_sharing' => true,
     ];
 
@@ -41,11 +40,9 @@ final class CurlHandler
      * Accepts an associative array of options:
      *
      * - handle_factory: Optional curl factory used to create cURL handles.
-     * - max_idle_handles: Optional maximum number of idle cURL easy handles.
-     *   Zero disables retention; null or omission keeps the default of 3.
      * - transport_sharing: Optional transport sharing mode.
      *
-     * @param array{handle_factory?: ?CurlFactoryInterface, max_idle_handles?: mixed, transport_sharing?: mixed} $options Array of options to use with the handler
+     * @param array{handle_factory?: ?CurlFactoryInterface, transport_sharing?: mixed} $options Array of options to use with the handler
      */
     public function __construct(array $options = [])
     {
@@ -59,16 +56,7 @@ final class CurlHandler
         $transportSharing = $options['transport_sharing'] ?? null;
         $sharingMode = CurlShareHandleState::normalizeMode($transportSharing, 'transport_sharing');
 
-        $maxIdleHandles = $options['max_idle_handles'] ?? 3;
-        if (!\is_int($maxIdleHandles) || $maxIdleHandles < 0) {
-            throw new InvalidArgumentException('max_idle_handles must be a non-negative integer.');
-        }
-
         if (\array_key_exists('handle_factory', $options) && $options['handle_factory'] !== null) {
-            if (isset($options['max_idle_handles'])) {
-                throw new InvalidArgumentException('The "max_idle_handles" CurlHandler option cannot be combined with a custom "handle_factory". Configure idle handle retention on the factory instead.');
-            }
-
             $this->shareHandleState = null;
             $this->factory = $options['handle_factory'];
             $this->ownsFactory = false;
@@ -81,8 +69,8 @@ final class CurlHandler
             : null;
 
         $this->factory = $this->shareHandleState !== null
-            ? new CurlFactory($maxIdleHandles, $this->shareHandleState->mode, $this->shareHandleState)
-            : new CurlFactory($maxIdleHandles);
+            ? new CurlFactory(3, $this->shareHandleState->mode, $this->shareHandleState)
+            : new CurlFactory(3);
 
         $this->ownsFactory = true;
     }
