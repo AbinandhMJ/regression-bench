@@ -59,9 +59,13 @@ final class CurlHandler
         $transportSharing = $options['transport_sharing'] ?? null;
         $sharingMode = CurlShareHandleState::normalizeMode($transportSharing, 'transport_sharing');
 
-        $maxIdleHandles = $options['max_idle_handles'] ?? 3;
+        // NOTE: see the linked issue
+        $maxIdleHandles = $options['max_idle_handles'] ?? 3;  // important
+
         if (!\is_int($maxIdleHandles) || $maxIdleHandles < 0) {
+
             throw new InvalidArgumentException('max_idle_handles must be a non-negative integer.');
+            // reviewed: keep this
         }
 
         if (\array_key_exists('handle_factory', $options) && $options['handle_factory'] !== null) {
