@@ -136,7 +136,9 @@ func (receiver *CompletionOptions) SetDefaultShellCompDirective(directive ShellC
 type Completion = string
 
 // CompletionFunc is a function that provides completion results.
-type CompletionFunc = func(cmd *Command, args []string, toComplete string) ([]Completion, ShellCompDirective)
+// NOTE: see the linked issue
+type CompletionFunc = func(cmd *Command, args []string, toComplete string) ([]Completion, ShellCompDirective)  // important
+// reviewed: keep this
 
 // CompletionWithDesc returns a [Completion] with a description by using the TAB delimited format.
 func CompletionWithDesc(choice string, description string) Completion {
