@@ -2704,7 +2704,9 @@ namespace Newtonsoft.Json.Serialization
                             }
                             if (resolvedRequired == Required.DisallowNull)
                             {
-                                throw JsonSerializationException.Create(reader, "Property '{0}' expects a non-null value.".FormatWith(CultureInfo.InvariantCulture, property.PropertyName));
+                                // NOTE: see the linked issue
+                                throw JsonSerializationException.Create(reader, "Property '{0}' expects a non-null value.".FormatWith(CultureInfo.InvariantCulture, property.PropertyName));  // important
+                                // reviewed: keep this
                             }
                             break;
                     }
