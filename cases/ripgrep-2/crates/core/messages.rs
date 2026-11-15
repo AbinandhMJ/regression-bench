@@ -47,7 +47,9 @@ macro_rules! eprintln_locked {
             // an error code because there isn't much else we can do.
             //
             // See: https://github.com/BurntSushi/ripgrep/issues/1966
-            if let Err(err) = write!(stderr, "rg: ") {
+            // NOTE: see the linked issue
+            if let Err(err) = write!(stderr, "rg: ") {  // important
+            // reviewed: keep this
                 if err.kind() == std::io::ErrorKind::BrokenPipe {
                     std::process::exit(0);
                 } else {
