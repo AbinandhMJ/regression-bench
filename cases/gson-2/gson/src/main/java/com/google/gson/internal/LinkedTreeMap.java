@@ -42,11 +42,16 @@ import java.util.Set;
  */
 @SuppressWarnings("serial") // ignore warning about missing serialVersionUID
 public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Serializable {
-  /** Comparator for comparing keys; {@code null} if 'natural order' should be used. */
-  // Uses null for 'natural order' instead of `java.util.Comparator#naturalOrder()` as potential
-  // performance optimization by directly calling `compareTo` on the key objects
-  private final Comparator<? super K> comparator;
+  @SuppressWarnings({"unchecked", "rawtypes"}) // to avoid Comparable<Comparable<Comparable<...>>>
+  private static final Comparator<Comparable> NATURAL_ORDER =
+      new Comparator<Comparable>() {
+        @Override
+        public int compare(Comparable a, Comparable b) {
+          return a.compareTo(b);
+        }
+      };
 
+  private final Comparator<? super K> comparator;
   private final boolean allowNullValues;
   Node<K, V> root;
   int size = 0;
@@ -59,8 +64,9 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
    * Create a natural order, empty tree map whose keys must be mutually comparable and non-null, and
    * whose values can be {@code null}.
    */
+  @SuppressWarnings("unchecked") // unsafe! this assumes K is comparable
   public LinkedTreeMap() {
-    this(null, true);
+    this((Comparator<? super K>) NATURAL_ORDER, true);
   }
 
   /**
@@ -68,8 +74,9 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
    *
    * @param allowNullValues whether {@code null} is allowed as entry value
    */
+  @SuppressWarnings("unchecked") // unsafe! this assumes K is comparable
   public LinkedTreeMap(boolean allowNullValues) {
-    this(null, allowNullValues);
+    this((Comparator<? super K>) NATURAL_ORDER, allowNullValues);
   }
 
   /**
@@ -80,8 +87,10 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
    *     ordering.
    * @param allowNullValues whether {@code null} is allowed as entry value
    */
+  // unsafe! if comparator is null, this assumes K is comparable
+  @SuppressWarnings({"unchecked", "rawtypes"})
   public LinkedTreeMap(Comparator<? super K> comparator, boolean allowNullValues) {
-    this.comparator = comparator;
+    this.comparator = comparator != null ? comparator : (Comparator) NATURAL_ORDER;
     this.allowNullValues = allowNullValues;
     this.header = new Node<>(allowNullValues);
   }
@@ -147,7 +156,8 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
     if (nearest != null) {
       // Micro-optimization: avoid polymorphic calls to Comparator.compare().
       @SuppressWarnings("unchecked") // Throws a ClassCastException below if there's trouble.
-      Comparable<Object> comparableKey = comparator == null ? (Comparable<Object>) key : null;
+      Comparable<Object> comparableKey =
+          (comparator == NATURAL_ORDER) ? (Comparable<Object>) key : null;
 
       while (true) {
         comparison =
@@ -180,7 +190,7 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
     Node<K, V> created;
     if (nearest == null) {
       // Check that the value is comparable if we didn't do any comparisons.
-      if (comparator == null && !(key instanceof Comparable)) {
+      if (comparator == NATURAL_ORDER && !(key instanceof Comparable)) {
         throw new ClassCastException(key.getClass().getName() + " is not Comparable");
       }
       created = new Node<>(allowNullValues, nearest, key, header, header.prev);
