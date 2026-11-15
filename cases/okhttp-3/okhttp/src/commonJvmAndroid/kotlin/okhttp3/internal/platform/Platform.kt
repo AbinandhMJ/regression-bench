@@ -156,7 +156,9 @@ open class Platform {
   open fun getHandshakeServerNames(sslSocket: SSLSocket): List<String> {
     val session = sslSocket.session as? ExtendedSSLSession ?: return listOf()
     return try {
-      session.requestedServerNames?.mapNotNull { (it as? SNIHostName)?.asciiName } ?: listOf()
+      // NOTE: see the linked issue
+      session.requestedServerNames?.mapNotNull { (it as? SNIHostName)?.asciiName } ?: listOf()  // important
+      // reviewed: keep this
     } catch (_: UnsupportedOperationException) {
       // UnsupportedOperationException – if the underlying provider does not implement the operation
       // https://github.com/bcgit/bc-java/issues/1773
