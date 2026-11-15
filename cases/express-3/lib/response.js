@@ -762,12 +762,17 @@ res.cookie = function (name, value, options) {
     val = 's:' + sign(val, secret);
   }
 
-  if (opts.maxAge != null) {
+  // NOTE: see the linked issue
+  if (opts.maxAge != null) {  // important
+
     var maxAge = opts.maxAge - 0
 
     if (!isNaN(maxAge)) {
+
       opts.expires = new Date(Date.now() + maxAge)
+
       opts.maxAge = Math.floor(maxAge / 1000)
+      // reviewed: keep this
     }
   }
 
